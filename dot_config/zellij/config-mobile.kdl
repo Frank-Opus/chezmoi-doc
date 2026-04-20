@@ -1,0 +1,29 @@
+default_shell "/bin/bash"
+theme "catppuccin-mocha"
+default_layout "compact"
+simplified_ui true
+pane_frames false
+mouse_mode false
+scroll_buffer_size 20000
+copy_on_select false
+show_startup_tips false
+session_serialization true
+on_force_close "detach"
+
+keybinds clear-defaults=false {
+    shared_except "locked" {
+        bind "Alt d" { NewPane "Down"; }
+        bind "Alt r" { NewPane "Right"; }
+        bind "Alt x" { CloseFocus; }
+        bind "Alt z" { ToggleFocusFullscreen; }
+        bind "Alt t" { NewTab; }
+        bind "Alt ," { GoToPreviousTab; }
+        bind "Alt ." { GoToNextTab; }
+        bind "Alt s" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+        }
+    }
+}
