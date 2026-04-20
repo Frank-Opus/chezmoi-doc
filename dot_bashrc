@@ -132,6 +132,16 @@ fi
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
 
+# Zellij shortcuts loaded after zoxide so `za` is not overwritten.
+alias zj='zellij'
+alias za='zellij attach -c main'
+alias zl='zellij ls'
+alias zk='zellij kill-all-sessions'
+alias zd='zellij delete-all-sessions -y'
+zks() {
+    command zellij kill-session "$1"
+}
+
 # Shell history search and completion.
 [ -x ~/.local/bin/atuin ] && eval "$(~/.local/bin/atuin init bash)"
 [[ ! ${BLE_VERSION-} ]] || ble-attach
