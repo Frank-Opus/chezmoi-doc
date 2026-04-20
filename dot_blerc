@@ -1,0 +1,7 @@
+# Keep the shell responsive while still surfacing inline suggestions quickly.
+bleopt complete_auto_delay=180
+bleopt prompt_eol_mark=''
+
+# Use ble.sh's fzf integration to avoid keybinding and completion conflicts.
+ble-import -d integration/fzf-completion
+ble-import -d integration/fzf-key-bindings

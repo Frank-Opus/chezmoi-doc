@@ -2,6 +2,9 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# Preload ble.sh early and attach after the rest of the interactive config.
+[[ $- == *i* && -f ~/.local/share/blesh/ble.sh ]] && source -- ~/.local/share/blesh/ble.sh --attach=none
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -128,3 +131,7 @@ fi
 # Prompt and smart directory jumping.
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
+
+# Shell history search and completion.
+[ -x ~/.local/bin/atuin ] && eval "$(~/.local/bin/atuin init bash)"
+[[ ! ${BLE_VERSION-} ]] || ble-attach
