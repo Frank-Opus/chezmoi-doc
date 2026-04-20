@@ -1,0 +1,10 @@
+[mgr]
+sort_dir_first = true
+show_hidden = true
+show_symlink = true
+scrolloff = 6
+
+[preview]
+tab_size = 2
+max_width = 1800
+max_height = 1800

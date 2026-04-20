@@ -1,0 +1,4 @@
+[[mgr.prepend_keymap]]
+on = [ "g", "f" ]
+run = 'search_do --via=fd --args="-d 3"'
+desc = "Flat search with fd at depth 3"
