@@ -17,6 +17,8 @@ keybinds clear-defaults=false {
         bind "Alt x" { CloseFocus; }
         bind "Alt z" { ToggleFocusFullscreen; }
         bind "Alt t" { NewTab; }
+        bind "Alt ," { GoToPreviousTab; }
+        bind "Alt ." { GoToNextTab; }
         bind "Alt s" {
             LaunchOrFocusPlugin "session-manager" {
                 floating true
