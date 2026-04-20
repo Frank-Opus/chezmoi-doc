@@ -134,10 +134,36 @@ eval "$(zoxide init bash)"
 
 # Zellij shortcuts loaded after zoxide so `za` is not overwritten.
 alias zj='zellij'
-alias za='zellij attach -c main'
 alias zl='zellij ls'
 alias zk='zellij kill-all-sessions'
 alias zd='zellij delete-all-sessions -y'
+unalias za 2>/dev/null || true
+za() {
+    local target sessions
+
+    if [ $# -gt 0 ]; then
+        command zellij attach -c "$1"
+        return
+    fi
+
+    sessions="$(
+        command zellij ls 2>/dev/null |
+            sed -r 's/\x1B\[[0-9;]*[mK]//g' |
+            awk 'NF { print $1 }'
+    )"
+
+    if [ -z "$sessions" ]; then
+        command zellij attach -c main
+        return
+    fi
+
+    target="$(
+        printf '%s\n' "$sessions" |
+            fzf --prompt='zellij session> ' --height=40% --reverse --border --exit-0
+    )"
+
+    [ -n "$target" ] && command zellij attach -c "$target"
+}
 zks() {
     command zellij kill-session "$1"
 }
