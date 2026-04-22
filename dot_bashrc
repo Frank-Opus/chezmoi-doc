@@ -2,22 +2,15 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-# Preload ble.sh early and attach after the rest of the interactive config.
-[[ $- == *i* && -f ~/.local/share/blesh/ble.sh ]] && source -- ~/.local/share/blesh/ble.sh --attach=none
-
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
       *) return;;
 esac
 
-# Reset any terminal private modes left behind by a crashed/aborted TUI so
-# plain shell scrollback works normally again in terminal emulators.
-case "$TERM" in
-    xterm*|rxvt*|screen*|tmux*|ghostty*)
-        printf '\033[?1000l\033[?1002l\033[?1003l\033[?1005l\033[?1006l\033[?1015l\033[?1007l\033[?1l\033>'
-        ;;
-esac
+if [ -z "${ZSH_VERSION-}" ] && command -v zsh >/dev/null 2>&1; then
+    exec zsh -l
+fi
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -58,12 +51,9 @@ esac
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+        color_prompt=yes
     else
-	color_prompt=
+        color_prompt=
     fi
 fi
 
@@ -95,31 +85,17 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
-alias mosh='mosh --no-init'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
+# enable programmable completion features
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
@@ -128,46 +104,4 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Prompt and smart directory jumping.
-eval "$(starship init bash)"
-eval "$(zoxide init bash)"
-
-# Zellij shortcuts loaded after zoxide so `za` is not overwritten.
-alias zj='zellij'
-alias zl='zellij ls'
-alias zk='zellij kill-all-sessions'
-alias zd='zellij delete-all-sessions -y'
-unalias za 2>/dev/null || true
-za() {
-    local target sessions
-
-    if [ $# -gt 0 ]; then
-        command zellij attach -c "$1"
-        return
-    fi
-
-    sessions="$(
-        command zellij ls 2>/dev/null |
-            sed -r 's/\x1B\[[0-9;]*[mK]//g' |
-            awk 'NF { print $1 }'
-    )"
-
-    if [ -z "$sessions" ]; then
-        command zellij attach -c main
-        return
-    fi
-
-    target="$(
-        printf '%s\n' "$sessions" |
-            fzf --prompt='zellij session> ' --height=40% --reverse --border --exit-0
-    )"
-
-    [ -n "$target" ] && command zellij attach -c "$target"
-}
-zks() {
-    command zellij kill-session "$1"
-}
-
-# Shell history search and completion.
-[ -x ~/.local/bin/atuin ] && eval "$(~/.local/bin/atuin init bash)"
-[[ ! ${BLE_VERSION-} ]] || ble-attach
+[ -x "$HOME/.local/bin/starship" ] && eval "$("$HOME/.local/bin/starship" init bash)"

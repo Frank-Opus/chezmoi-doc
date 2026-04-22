@@ -1,25 +1,36 @@
-# Modern CLI defaults.
-alias ls='eza --icons=auto'
-alias ll='eza -lah --icons=auto --git'
-alias la='eza -a --icons=auto'
-alias l='eza --icons=auto'
-alias lt='eza --tree --level=2 --icons=auto'
+alias mosh='mosh --no-init'
+alias zj='zellij'
+alias zl='zellij ls'
+alias zk='zellij kill-all-sessions'
+alias zd='zellij delete-all-sessions -y'
 
-# Keep the original commands available while making the modern tools easy to reach.
-alias c='bat'
-alias f='fd'
-alias lg='lazygit'
-alias ld='lazydocker'
-alias ff='fastfetch'
+za() {
+    local target sessions
 
-# Open yazi and jump to the last visited directory on exit.
-y() {
-    local tmp cwd
-    tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-    command yazi "$@" --cwd-file="$tmp"
-    IFS= read -r -d '' cwd < "$tmp" || true
-    if [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && [ -d "$cwd" ]; then
-        builtin cd -- "$cwd"
+    if [ $# -gt 0 ]; then
+        command zellij attach -c "$1"
+        return
     fi
-    rm -f -- "$tmp"
+
+    sessions="$(
+        command zellij ls 2>/dev/null |
+            sed -r 's/\x1B\[[0-9;]*[mK]//g' |
+            awk 'NF { print $1 }'
+    )"
+
+    if [ -z "$sessions" ]; then
+        command zellij attach -c main
+        return
+    fi
+
+    target="$(
+        printf '%s\n' "$sessions" |
+            fzf --prompt='zellij session> ' --height=40% --reverse --border --exit-0
+    )"
+
+    [ -n "$target" ] && command zellij attach -c "$target"
+}
+
+zks() {
+    command zellij kill-session "$1"
 }

@@ -1,0 +1,31 @@
+# ~/.zshrc
+
+[[ -o interactive ]] || return
+
+HISTFILE=$HOME/.zhistory
+HISTSIZE=1000
+SAVEHIST=2000
+
+setopt APPEND_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
+setopt AUTO_CD
+
+autoload -Uz compinit
+compinit
+
+if [[ -x /usr/bin/dircolors ]]; then
+  eval "$(/usr/bin/dircolors -b)"
+  alias ls='ls --color=auto'
+  alias grep='grep --color=auto'
+  alias fgrep='fgrep --color=auto'
+  alias egrep='egrep --color=auto'
+fi
+
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+[[ -f "$HOME/.bash_aliases" ]] && source "$HOME/.bash_aliases"
+[[ -x /usr/local/bin/starship ]] && eval "$(/usr/local/bin/starship init zsh)"
