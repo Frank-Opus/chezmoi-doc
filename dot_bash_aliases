@@ -14,7 +14,7 @@ za() {
 
     sessions="$(
         command zellij ls 2>/dev/null |
-            sed -r 's/\x1B\[[0-9;]*[mK]//g' |
+            sed -E 's/\x1B\[[0-9;]*[mK]//g' |
             awk 'NF { print $1 }'
     )"
 

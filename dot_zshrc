@@ -2,6 +2,12 @@
 
 [[ -o interactive ]] || return
 
+[[ -r "$HOME/.zprofile" ]] && source "$HOME/.zprofile"
+
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME=""
+plugins=(git)
+
 HISTFILE=$HOME/.zhistory
 HISTSIZE=1000
 SAVEHIST=2000
@@ -12,11 +18,15 @@ setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY
 setopt AUTO_CD
 
-autoload -Uz compinit
-compinit
+if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
+  source "$ZSH/oh-my-zsh.sh"
+else
+  autoload -Uz compinit
+  compinit
+fi
 
-if [[ -x /usr/bin/dircolors ]]; then
-  eval "$(/usr/bin/dircolors -b)"
+if command -v dircolors >/dev/null 2>&1; then
+  eval "$(dircolors -b)"
   alias ls='ls --color=auto'
   alias grep='grep --color=auto'
   alias fgrep='fgrep --color=auto'
@@ -28,4 +38,23 @@ alias la='ls -A'
 alias l='ls -CF'
 
 [[ -f "$HOME/.bash_aliases" ]] && source "$HOME/.bash_aliases"
-[[ -x /usr/local/bin/starship ]] && eval "$(/usr/local/bin/starship init zsh)"
+
+if [[ -r /opt/homebrew/opt/fzf/shell/completion.zsh ]]; then
+  source /opt/homebrew/opt/fzf/shell/completion.zsh
+fi
+
+if [[ -r /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
+  source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
+
+if command -v atuin >/dev/null 2>&1; then
+  eval "$(atuin init zsh)"
+fi
+
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi

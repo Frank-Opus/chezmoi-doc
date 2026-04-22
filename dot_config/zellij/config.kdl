@@ -1,4 +1,4 @@
-default_shell "/bin/bash"
+default_shell "/bin/zsh"
 theme "catppuccin-mocha"
 default_layout "compact"
 simplified_ui false

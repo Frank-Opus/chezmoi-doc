@@ -1,4 +1,19 @@
 # ~/.zprofile
 
-[[ -d "$HOME/bin" ]] && export PATH="$HOME/bin:$PATH"
-[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+typeset -U path PATH
+
+# Prefer Homebrew and GNU userland tools so Linux-oriented dotfiles keep working.
+for dir in \
+  /opt/homebrew/bin \
+  /opt/homebrew/sbin \
+  /opt/homebrew/opt/coreutils/libexec/gnubin \
+  /opt/homebrew/opt/grep/libexec/gnubin \
+  /opt/homebrew/opt/gnu-sed/libexec/gnubin \
+  /opt/homebrew/opt/gawk/libexec/gnubin \
+  "$HOME/bin" \
+  "$HOME/.local/bin"
+do
+  [[ -d "$dir" ]] && path=("$dir" $path)
+done
+
+export PATH
